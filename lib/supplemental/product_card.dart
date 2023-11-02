@@ -25,7 +25,7 @@ class ProductCard extends StatelessWidget {
 
   final double imageAspectRatio;
   final Product product;
-
+  
   static const kTextBoxHeight = 65.0;
 
   @override
@@ -34,10 +34,11 @@ class ProductCard extends StatelessWidget {
         decimalDigits: 0, locale: Localizations.localeOf(context).toString());
     final ThemeData theme = Theme.of(context);
 
-    final imageWidget = Image.asset(
-      product.assetName,
-      package: product.assetPackage,
-      fit: BoxFit.cover,
+    // imagepicker 사용해서 URL 받기
+    final imageWidget = Image.network(''
+      // product.assetName,
+      // package: product.assetPackage,
+      // fit: BoxFit.cover,
     );
 
     return Column(
@@ -55,17 +56,30 @@ class ProductCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              const Row(
+                children: <Widget>[
+                  Icon(
+                    Icons.star,
+                  ),
+                  Icon(
+                    Icons.star,
+                  ),
+                  Icon(
+                    Icons.star,
+                  ),
+                ],
+              ),
               Text(
                 product.name,
-                style: theme.textTheme.labelLarge,
+                style: theme.textTheme.button,
                 softWrap: false,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
               const SizedBox(height: 4.0),
               Text(
-                formatter.format(product.price),
-                style: theme.textTheme.bodySmall,
+                product.price.toString(),
+                style: theme.textTheme.caption,
               ),
             ],
           ),
