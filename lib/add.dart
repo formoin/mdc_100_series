@@ -55,32 +55,41 @@ class _AddPage extends State<AddPage>  {
       });
     }
 
-  Future saveImage() async {
+  Future<String> saveImage() async {
+    Future<String> url;
     if (_image != null) {
       // 이미지가 선택된 경우 Firebase Storage에 업로드
-      Reference storageReference = FirebaseStorage.instance.ref().child('product_image.png');
+      Reference storageReference = FirebaseStorage.instance.ref().child("product/${_image!.path.toString}");
       await storageReference.putFile(_image!);
+      url = storageReference.getDownloadURL();
       print('Image uploaded to Firebase Storage.');
     } else {
-      // 이미지가 선택되지 않은 경우 기본 이미지를 저장
+      Reference storageReference = FirebaseStorage.instance.ref().child("product/${FirebaseAuth.instance.currentUser!.uid}");
+      await storageReference.putString("https://handong.edu/site/handong/res/img/logo.png");
+      url = Future(() => "https://handong.edu/site/handong/res/img/logo.png");
       print('Saving default image as product image.');
     }
+    return url;
   }
 
-  void saveDataToFirestore() {
+  Future<void> saveDataToFirestore() async {
     String productName = _nameController.text;
     int productPrice = int.parse(_priceController.text);
     String discription = _descriptionController.text;
 
+    Future<String> url = saveImage();
+    String _url = await url;
+  
+
+
     FirebaseFirestore.instance
         .collection('productbook')
         .add(<String, dynamic>{
-      // 'image': _image,
+      'image': _url,
       'name': productName,
       'price': productPrice,
       'description': discription,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'writer': FirebaseAuth.instance.currentUser!.displayName,
       'userId': FirebaseAuth.instance.currentUser!.uid,
     });
 
@@ -117,6 +126,7 @@ class _AddPage extends State<AddPage>  {
             ),
             onPressed: () async{
               // 상품이 저장 되어야 함
+              
               saveDataToFirestore();
               _descriptionController.clear();
               _nameController.clear();

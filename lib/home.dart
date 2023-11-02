@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -20,8 +21,17 @@ import 'package:shrine/detailed.dart';
 import 'package:shrine/productbook.dart';
 
 import 'model/product.dart';
+import 'app_state.dart';
+import 'add.dart';
 import 'model/products_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'detailed.dart';
+
+class SecondScreenArguments {
+  Product product;
+
+  SecondScreenArguments({required this.product});
+}
 
 final Uri _url = Uri.parse('https://www.handong.edu/');
 List<Product> favorite = [];
@@ -38,10 +48,11 @@ class HomePage extends StatefulWidget{
 
 
 class _HomePage extends State<HomePage> {
-List<Product> products = [];
+  List<Product> productslist = [];
 
-  List<Card> _buildGridCards(BuildContext context) {
-    if (products.isEmpty) {
+  List<Card> _buildGridCards(BuildContext context, ApplicationState appState) {
+    productslist = appState.products;
+    if (productslist.isEmpty) {
       return const <Card>[];
     }
 
@@ -49,7 +60,7 @@ List<Product> products = [];
     final NumberFormat formatter = NumberFormat.simpleCurrency(
         locale: Localizations.localeOf(context).toString());
 
-    return products.map((product) {
+    return productslist.map((product) {
       return Card(
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -60,7 +71,7 @@ List<Product> products = [];
               height: 100,
               padding: EdgeInsets.zero,
               child: PhotoHero(
-                photo: 'https://picsum.photos/250?image=9',
+                photo: product.image,
                 // package: product.assetPackage,
                 width: 300,
               ),
@@ -71,16 +82,6 @@ List<Product> products = [];
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Row(
-                    //   children: 
-                    //     // List.generate(product.isFeatured, (index) {
-                    //     //   return const Icon(
-                    //     //     Icons.star,
-                    //     //     color: Colors.yellow,
-                    //     //     size: 15,
-                    //     //   );
-                    //     // })         
-                    // ),
                     Text(
                       product.name,
                       style: const TextStyle(
@@ -89,11 +90,11 @@ List<Product> products = [];
                       ),
                       maxLines: 1,
                     ),
-                    const SizedBox(height: 4.0),
+                    const SizedBox(height: 2.0),
                     Row(
                       children: [
                         const Icon(
-                          Icons.location_on,
+                          Icons.attach_money,
                           size: 12,
                         ),
                         Text(
@@ -203,18 +204,10 @@ List<Product> products = [];
           const SizedBox(
             height: 10, width: 1000
           ),
-          Consumer<ApplicationState>(
-            builder: (context, appState, _) => Expanded(
-              child: ProductBook(
-                      addMessage: (name, price, discription) =>
-                          appState.addProduct(name, price, discription),
-                      products: appState.products,
-                      deleteMessage: (productdoc) =>
-                          appState.deleteProduct(productdoc),
-                    ),
-            
-            ),
+          Expanded(
+             child : _buildList(context)  
           ),
+          
         ],
       ),
       resizeToAvoidBottomInset: false,
@@ -226,15 +219,15 @@ List<Product> products = [];
     }
   }
 
-  Widget _buildList() {
-    return OrientationBuilder(
-      builder:(context, orientation) {
+  Widget _buildList(BuildContext context) {
+    return Consumer<ApplicationState>(
+      builder:(context, appState, _) {
         return GridView.count(
-        crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
-        padding: const EdgeInsets.all(16.0),
-        childAspectRatio: 8.0 / 9.0,
-        children: _buildGridCards(context),
-      );
+          crossAxisCount: 2,
+          padding: const EdgeInsets.all(16.0),
+          childAspectRatio: 8.0 / 9.0,
+          children: _buildGridCards(context, appState),
+        );
       },
     );
       

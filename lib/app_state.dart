@@ -24,6 +24,7 @@ class ApplicationState extends ChangeNotifier {
   int _attendees = 0;
   int get attendees => _attendees;
 
+  var db = FirebaseFirestore.instance;
   StreamSubscription<QuerySnapshot>? _productSubscription;
   StreamSubscription<QuerySnapshot>? _userSubscription;
   List<Product> _products = [];
@@ -32,16 +33,16 @@ class ApplicationState extends ChangeNotifier {
   Like _like = Like.unknown;
   StreamSubscription<DocumentSnapshot>? _attendingSubscription;
   Like get like => _like;
-  set like(Like like) {
-    final userDoc = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid);
-    if (like == Like.yes) {
-      userDoc.set(<String, dynamic>{'like': true});
-    } else {
-      userDoc.set(<String, dynamic>{'like': false});
-    }
-  }
+  // set like(Like like) {
+  //   final userDoc = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(FirebaseAuth.instance.currentUser!.uid);
+  //   if (like == Like.yes) {
+  //     userDoc.set(<String, dynamic>{'like': true});
+  //   } else {
+  //     userDoc.set(<String, dynamic>{'like': false});
+  //   }
+  // }
   
   Future<void> init() async {
     
@@ -62,55 +63,36 @@ class ApplicationState extends ChangeNotifier {
     //   notifyListeners();
     // });
 
-    // FirebaseAuth.instance.userChanges().listen((user) {
-    //   if (user != null) {
-    //     _loggedIn = true;
-    //     _productSubscription = FirebaseFirestore.instance
-    //         .collection('product')
-    //         .orderBy('timestamp', descending: true)
-    //         .snapshots()
-    //         .listen((snapshot) {
-    //       _products = [];
-    //       for (final document in snapshot.docs) {
-    //         _products.add(
-    //           Product(
-    //             name: document.data()['name'] as String,
-    //             // imageURL: ' ',
-    //             price: document.data()['price'],
-    //             descrip: document.data()['description'] as String,
-    //             created: DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['timestamp'].toString())),
-    //             // modified: DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['modified'].toString())),
-    //             // reference: document.reference
-    //             // likeNum: 
-    //           ),
-    //         );
-    //       }
-        //   notifyListeners();
-        // });
-        // _attendingSubscription = FirebaseFirestore.instance
-        //     .collection('attendees')
-        //     .doc(user.uid)
-        //     .snapshots()
-        //     .listen((snapshot) {
-        //   if (snapshot.data() != null) {
-        //     if (snapshot.data()!['attending'] as bool) {
-        //       _attending = Attending.yes;
-        //     } else {
-        //       _attending = Attending.no;
-        //     }
-        //   } else {
-        //     _attending = Attending.unknown;
-  //         }
-  //         notifyListeners();
-  //       });
-  //     } else {
-  //       _loggedIn = false;
-  //       _guestBookMessages = [];
-  //       _productSubscription?.cancel();
-  //       _attendingSubscription?.cancel();
-  //     }
-  //     notifyListeners();
-  //   });
+    FirebaseAuth.instance.userChanges().listen((user) {
+      
+      _loggedIn = true;
+      _productSubscription = FirebaseFirestore.instance
+          .collection('productbook')
+          .orderBy('timestamp', descending: true)
+          .snapshots()
+          .listen((snapshot) {
+        _products = [];
+        for (final document in snapshot.docs) {
+          _products.add(
+            Product(
+              uid: document.data()['userId'] as String,
+              name: document.data()['name'] as String,
+              image: document.data()['image'] as String,
+              price: document.data()['price'],
+              discription: document.data()['description'] as String,
+              created: DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['timestamp'].toString())),
+              // modified: DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['modified'].toString())),
+              reference: document.reference
+              // likeNum: 
+            ),
+          );
+        }
+        notifyListeners();
+      });
+        
+      notifyListeners();
+    });
+    
   }
   
   Future<DocumentReference> addProduct(String name, int price, String descrip) {

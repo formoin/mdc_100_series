@@ -17,8 +17,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 //URL, name, price, favorite_num = 0, discription = default, UID, createtime, recentupdatetime,
 class Product {
   Product({
-    // required this.uid,
-    // required this.imageURL,
+    required this.uid,
+    required this.image,
     required this.name, 
     required this.price,
     required this.discription, 
@@ -28,8 +28,8 @@ class Product {
     // required this.likeNum
   });
 
-  // final int uid;
-  // final String imageURL;
+  final String uid;
+  final String image;
   String name;
   int price;
   String discription;
