@@ -80,10 +80,9 @@ class ApplicationState extends ChangeNotifier {
               image: document.data()['image'] as String,
               price: document.data()['price'],
               discription: document.data()['description'] as String,
-              created: DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['timestamp'].toString())),
-              // modified: DateTime.fromMillisecondsSinceEpoch(int.parse(document.data()['modified'].toString())),
+              created: DateTime.fromMicrosecondsSinceEpoch(document.data()['timestamp'].microsecondsSinceEpoch).toLocal(),
+              modified: document.data()['modified'] == null? null : DateTime.fromMillisecondsSinceEpoch(document.data()['modified'].millisecondsSinceEpoch).toLocal(),
               reference: document.reference
-              // likeNum: 
             ),
           );
         }
@@ -112,8 +111,5 @@ class ApplicationState extends ChangeNotifier {
     });
   }
 
-  Future<void> deleteProduct(Product product) async{
-
-    await product.reference.delete();
-  }
+  
 }

@@ -23,8 +23,9 @@ class Product {
     required this.price,
     required this.discription, 
     required this.created,
-    // required this.modified, 
+    required this.modified, 
     required this.reference,
+    // required this.docid,
     // required this.likeNum
   });
 
@@ -34,8 +35,8 @@ class Product {
   int price;
   String discription;
   DateTime created;
-  // final DateTime modified;
-  final DocumentReference reference; 
+  DateTime? modified;
+  final DocumentReference reference;
   // final int likeNum;
   
 

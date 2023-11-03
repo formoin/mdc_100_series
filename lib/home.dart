@@ -23,17 +23,9 @@ import 'package:shrine/productbook.dart';
 import 'model/product.dart';
 import 'app_state.dart';
 import 'add.dart';
-import 'model/products_repository.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'detailed.dart';
 
-class SecondScreenArguments {
-  Product product;
 
-  SecondScreenArguments({required this.product});
-}
-
-final Uri _url = Uri.parse('https://www.handong.edu/');
 List<Product> favorite = [];
 List<String> list = <String>['ASC', 'DESC'];
 
@@ -55,11 +47,6 @@ class _HomePage extends State<HomePage> {
     if (productslist.isEmpty) {
       return const <Card>[];
     }
-
-    final ThemeData theme = Theme.of(context);
-    final NumberFormat formatter = NumberFormat.simpleCurrency(
-        locale: Localizations.localeOf(context).toString());
-
     return productslist.map((product) {
       return Card(
         clipBehavior: Clip.antiAlias,
@@ -70,10 +57,11 @@ class _HomePage extends State<HomePage> {
             Container(
               height: 100,
               padding: EdgeInsets.zero,
-              child: PhotoHero(
-                photo: product.image,
+              child: Image.network(
+                product.image,
                 // package: product.assetPackage,
                 width: 300,
+                height: 400,
               ),
             ),
             Expanded(
@@ -97,11 +85,13 @@ class _HomePage extends State<HomePage> {
                           Icons.attach_money,
                           size: 12,
                         ),
-                        Text(
-                          product.price.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-
+                        Expanded(
+                          child: Text(
+                            product.price.toString(),
+                            style: const TextStyle(
+                              fontSize: 12,
+                                            
+                            ),
                           ),
                         ),
                       ],
@@ -119,7 +109,7 @@ class _HomePage extends State<HomePage> {
                         onPressed: () {
                           Navigator.pushNamed(
                             context, 
-                            '/detailed',
+                            '/detailed', 
                             arguments: SecondScreenArguments(product: product));
                        },
                         child: const Text(
@@ -154,7 +144,7 @@ class _HomePage extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Main'),
         leading: IconButton(
-          icon: Icon(
+          icon: const Icon(
             Icons.person,
           ),
           onPressed: () {
@@ -164,7 +154,7 @@ class _HomePage extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(
-              Icons.plus_one,
+              Icons.add,
               semanticLabel: 'search',
             ),
             onPressed: () {
@@ -213,11 +203,6 @@ class _HomePage extends State<HomePage> {
       resizeToAvoidBottomInset: false,
     );
   }
-  Future<void> _launchUrl() async {
-    if (!await launchUrl(_url)) {
-      throw Exception('Could not launch $_url');
-    }
-  }
 
   Widget _buildList(BuildContext context) {
     return Consumer<ApplicationState>(
@@ -234,41 +219,3 @@ class _HomePage extends State<HomePage> {
   }
   
 }
-
-
-
-class PhotoHero extends StatelessWidget {
-  const PhotoHero({
-    super.key,
-    required this.photo,
-    // required this.package,
-    this.onTap,
-    required this.width,
-  });
-
-  final String photo;
-  // final String package;
-  final VoidCallback? onTap;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Hero(
-        tag: photo,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onDoubleTap: onTap,
-            child: Image.network(
-              photo,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-

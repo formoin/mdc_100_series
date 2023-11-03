@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:shrine/add.dart';
 import 'package:shrine/mypage.dart';
 import 'package:shrine/signup.dart';
+import 'package:shrine/update.dart';
 
 import 'home.dart';
 import 'login.dart';
@@ -36,7 +37,7 @@ class ShrineApp extends StatelessWidget {
         '/login': (BuildContext context) => const LoginPage(),
         '/': (BuildContext context) => const HomePage(),
         '/add':( BuildContext context) => const AddPage(),
-        '/login/signup' : (BuildContext context) => const SignUpPage(),
+        '/update':( BuildContext context) => const UpdatePage(),  
         '/search': (BuildContext context) => const SearchPage(),
         '/detailed': (BuildContext context) => const DetailedPage(),
         '/favorite': (BuildContext context) => const FavoritePage(),

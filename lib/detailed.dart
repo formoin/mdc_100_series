@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -10,44 +11,10 @@ class SecondScreenArguments {
   SecondScreenArguments({required this.product});
 }
 
-class PhotoHero extends StatelessWidget {
-  const PhotoHero({
-    super.key,
-    required this.photo,
-    required this.package,
-    this.onTap,
-    this.wid,
-    required this.width,
-  });
+Future<void> deleteProduct(Product product) async{
 
-  final String photo;
-  final String package;
-  final VoidCallback? onTap;
-  final Widget? wid;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    
-    return SizedBox(
-      width: width,
-      child: Hero(
-        tag: photo,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onDoubleTap: onTap,
-            child: Image.asset(
-              photo,
-              package: package,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
-    );
+    await product.reference.delete();
   }
-}
 
 class DetailedPage extends StatefulWidget {
   const DetailedPage({Key? key}) : super(key: key);
@@ -66,126 +33,114 @@ class _DetailedPage extends State<DetailedPage>  {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail'),
+        actions: [
+          if (FirebaseAuth.instance.currentUser!.uid == args.product.uid) ...[
+            
+            IconButton(onPressed: (){
+              Navigator.pushNamed(
+                context, 
+                '/update', 
+                arguments: SecondScreenArguments(product: args.product));
+            }, icon: Icon(
+              Icons.create
+            )),
+            IconButton(
+              onPressed: () {
+                deleteProduct(args.product);
+                Navigator.pushNamed(context, '/' );
+              } ,
+              icon: Icon(Icons.delete)),
+          ],
+        ],
       ),
-      // body: SingleChildScrollView(
-      //   child: Column(
-      //     // Set background to blue to emphasize that it's a new route.
-      //     children: [
-      //       Stack(
-      //         alignment: Alignment.topRight,
-      //         children : [
-      //           Container(
-      //             padding: EdgeInsets.zero,
-      //             alignment: Alignment.topCenter,
-      //             child: PhotoHero(
-      //               photo: args.product.assetName,
-      //               package: args.product.assetPackage,
-      //               width: 400.0,
-      //               onTap: () {
-      //                 setState(() {
-      //                   //  = !args.product.isFavorite;
-      //                   if(favorite.contains(args.product)){
-      //                     args.product.isFavorite = false;
-      //                     favorite.remove(args.product);
-      //                   }
-      //                   else{
-      //                     args.product.isFavorite = true;
-      //                     favorite.add(args.product);
-      //                   }
-                        
-      //                 });
-      //               },
-      //             ),
-      //           ),
-      //           Container(
-      //             padding: const EdgeInsets.all(20),
-      //             child: (args.product.isFavorite
-      //               ? const Icon(
-      //                 Icons.favorite,
-      //                 size: 30,
-      //                 color: Colors.red,
-      //               )
-      //               : const Icon(
-      //                 Icons.favorite,
-      //                 size: 30,
-      //                 color: Colors.black38,
-      //               )
-      //             ),
+      body: SingleChildScrollView(
+        child: Column(
+          // Set background to blue to emphasize that it's a new route.
+          children: [
+            Container(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.topCenter,
+              child: Image.network(
+                width:400,
+                height:300,
+                args.product.image
+              )
+            ),
+            Container(
+              padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children : [
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                           SizedBox(
+                            width: 240,
+                             child: Text(
+                              args.product.name,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
+                                color: Color.fromARGB(255, 21, 93, 152),
+                              ),
+                                                     ),
+                           ), 
+                          SizedBox(width: 50,),
+                          IconButton(
+                            onPressed: (() => ''), 
+                            icon: Icon(
+                              size: 35,
+                              Icons.thumb_up
+                          )),
+                          
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.attach_money,
+                            color: Colors.blue,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            args.product.price.toString(),
+                            style: const TextStyle(
+                              fontSize: 25,
+                              color: Colors.blue,
+                            )
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                      const Divider(thickness: 1, height: 1, color: Colors.black),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: 350,
+                        child: Text(
+                          args.product.discription,
+                        ),
+                      ),
+                      SizedBox(height: 100,),
+                      Text(
+                        args.product.created.toString()+'(created)'
+                      ),
+                      Text(
+                        args.product.modified.toString()+'(modified)'
+                      ),
+
+                    ],
+                  ),
                   
-      //           ),
-                
-      //         ],
-              
-      //       ),
-        
-      //       Container(
-      //         padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
-      //         child: Column(
-      //           crossAxisAlignment: CrossAxisAlignment.start,
-      //           children : [
-              
-      //             Row(
-      //               children: List.generate(args.product.isFeatured, (index) {
-      //                 return const Icon(
-      //                   Icons.star,
-      //                   color: Colors.yellow,
-      //                   size: 20,
-      //                 );
-      //               })
-      //             ),
-      //             const SizedBox(height: 10),
-      //             AnimatedTextKit(
-      //               animatedTexts: [
-      //                 TypewriterAnimatedText(
-      //                 args.product.name,
-      //                 textAlign: TextAlign.left,
-      //                   textStyle: const TextStyle(
-      //                     fontWeight: FontWeight.bold,
-      //                     fontSize: 20,
-      //                     color: Color.fromARGB(255, 21, 93, 152),
-      //                   ),
-      //                   speed: const Duration(milliseconds: 200),
-      //                 ),
-      //               ],
-      //               totalRepeatCount: 4,
-      //               pause: const Duration(milliseconds: 1000),
-      //               displayFullTextOnTap: true,
-      //               stopPauseOnTap: true,
-      //             ),
-      //             const SizedBox(height: 20),
-      //             Row(
-      //               children: [
-      //                 const Icon(
-      //                   Icons.location_on,
-      //                   color: Colors.blue,
-      //                 ),
-      //                 const SizedBox(width: 5),
-      //                 Text(args.product.address),
-      //               ],
-      //             ),
-      //             Row(
-      //               children: [
-      //                 const Icon(
-      //                   Icons.phone,
-      //                   color: Colors.blue,
-      //                 ),
-      //                 const SizedBox(width: 5),
-      //                 Text(args.product.phonenum),
-      
-      //               ],
-      //             ),
-      //             const SizedBox(height: 20),
-      //             const Divider(thickness: 1, height: 1, color: Colors.black26),
-      //             const SizedBox(height: 20),
-      //             Text(
-      //               args.product.descrip,
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
   
