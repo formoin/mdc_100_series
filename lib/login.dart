@@ -18,10 +18,13 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shrine/home.dart';
 
-
+int? loginver;
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 String? userid;
+String? email;
+String? username;
+String? imageurl;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -52,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
               child: const Text('Google 로그인'),
               onPressed: () async {
                 // Google 로그인 시도
+                loginver =1;
                 final userCredential = await signInWithGoogle();
                 if (userCredential != null) {
                   saveGoogleUserToFirestore(userCredential.user!);
@@ -66,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               child: const Text('익명 로그인'),
               onPressed: () async {
                 // 익명 로그인 시도
+                loginver=2;
                 final userCredential = await signInAnonymously();
                 if (userCredential != null) {
                   final user = userCredential.user;
@@ -98,11 +103,11 @@ Future<UserCredential?> signInAnonymously() async {
 Future<UserCredential?> signInWithGoogle() async {
   try {
     // Google 로그인 인증 플로우 시작
-    final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn(); // 여기서 에러 뜬다는 말이야?
+    final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount!.authentication;
 
     // Google 로그인 인증 정보를 사용하여 Firebase에 인증
-    final AuthCredential credential = GoogleAuthProvider.credential( // 다시 돌려서 어디서 막히는 지 봐줘
+    final AuthCredential credential = GoogleAuthProvider.credential( 
       accessToken: googleSignInAuthentication.accessToken, 
       idToken: googleSignInAuthentication.idToken,
     );
@@ -112,7 +117,7 @@ Future<UserCredential?> signInWithGoogle() async {
     
     return userCredential;
   } catch (error) {
-    print('Google 로그인 실패: $error'); // 여기? 프린트 된다고? 너무 에러 체킹을 넓게 한다
+    print('Google 로그인 실패: $error'); 
     return null;
   }
 }
@@ -136,20 +141,24 @@ Future<void> saveAnonymousUserToFirestore(User user) async {
 // user의 정보 불러와서 변수에 저장 -> 이거 안해도 되는듯? 할 만한게 없는데? 그냥 로그인하면 auth에서 다 관리 가능
 
 Future<void> saveGoogleUserToFirestore(User user) async {
-  userid = user.uid;
-  for (final providerProfile in user.providerData) {
-      final uid = providerProfile.uid;
-      if(uid == user.uid){
-        FirebaseFirestore.instance
-            .collection('user')
-            .doc(providerProfile.providerId)
-            .set(<String, dynamic>{
-          'message': "I promise to take the test honestly before GOD.",
-          'uid': providerProfile.providerId,
-          'name': providerProfile.displayName,
-          'email': providerProfile.email
-        });
-      }
+  
+  for (final providerProfile in user.providerData) { 
+
+    userid = providerProfile.uid;
+    email = providerProfile.email;
+    username = providerProfile.displayName;
+    imageurl = 'https://image.musinsa.com/mfile_s01/2022/05/16/c7544ec00472f1860347a0094c0ecfa1181418.jpg';
+
+    FirebaseFirestore.instance
+        .collection('user')
+        .doc(providerProfile.uid)
+        .set(<String, dynamic>{
+      'message': "I promise to take the test honestly before GOD.",
+      'uid': providerProfile.uid,
+      'name': providerProfile.displayName,
+      'email': providerProfile.email
+    });
+      
   }
 
 }

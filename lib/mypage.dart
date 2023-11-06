@@ -21,7 +21,7 @@ class _MyhomePage extends State<MyhomePage>{
         actions: [
           IconButton(
             onPressed: () {
-              signOutAnonymously();
+              loginver == 1 ? signInWithGoogle() : signOutAnonymously();
               Navigator.pushNamed( context, '/login' );
             },
             icon: Icon(
@@ -33,17 +33,30 @@ class _MyhomePage extends State<MyhomePage>{
         child: Column(
           // Set background to blue to emphasize that it's a new route.
           children: [
-            Container(
-              padding: EdgeInsets.zero,
-              alignment: Alignment.topCenter,
-              child: Image.network(
-                width:200,
-                height:200,
-
-                'http://handong.edu/site/handong/res/img/logo.png'
-// ********************* user profile image
-              )
-            ),
+            if(loginver == 2) ...[
+              Container(
+                padding: EdgeInsets.zero,
+                alignment: Alignment.topCenter,
+                child: 
+                  Image.network(
+                  width:200,
+                  height:200,
+                  'http://handong.edu/site/handong/res/img/logo.png'
+                ) 
+              ),
+            ]
+            else ...[
+              Container(
+                padding: EdgeInsets.zero,
+                alignment: Alignment.topCenter,
+                child: 
+                  Image.network(
+                  width:200,
+                  height:200,
+                  imageurl!
+                ) 
+              ),
+            ],
             Container(
               padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
               child: Row(
@@ -68,13 +81,22 @@ class _MyhomePage extends State<MyhomePage>{
                         SizedBox(width: 50,),
                         Divider( thickness: 1,),
                         SizedBox(width: 5),
-                        Text(
-                  //*********************** user email
-                          'anonymous',
-                          style: TextStyle(
-                            fontSize: 20,
-                          )
-                        ),
+                        if(loginver == 2) ... [
+                          Text(
+                            'anonymous',
+                            style: TextStyle(
+                              fontSize: 20,
+                            )
+                          ),
+                        ]
+                        else ... [
+                          Text(
+                            email!,
+                            style: TextStyle(
+                              fontSize: 20,
+                            )
+                          ),
+                        ],
                         SizedBox(height: 20),
                         Divider(thickness: 1, height: 1, color: Colors.black),
                         SizedBox(height: 100),

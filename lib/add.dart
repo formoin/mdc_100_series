@@ -4,8 +4,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shrine/detailed.dart';
@@ -52,7 +50,7 @@ class _AddPage extends State<AddPage>  {
     Future<String> url;
     if (_image != null) {
       // 이미지가 선택된 경우 Firebase Storage에 업로드
-      Reference storageReference = FirebaseStorage.instance.ref().child("product/${_image!.path.toString}");
+      Reference storageReference = FirebaseStorage.instance.ref().child("product/${_image!.absolute}");
       await storageReference.putFile(_image!);
       url = storageReference.getDownloadURL();
       print('Image uploaded to Firebase Storage.');
