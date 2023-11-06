@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import './model/product.dart';
 
 import 'home.dart';
 
@@ -10,6 +10,8 @@ class FavoritePage extends StatefulWidget{
   @override
   State<FavoritePage> createState() => _FavoritePage();
 }
+
+List<Product> myfavorites = [];
 
 class _FavoritePage extends State<FavoritePage>{
 

@@ -12,42 +12,6 @@ import 'home.dart';
 import 'detailed.dart';
 
 
-class PhotoHero extends StatelessWidget {
-  const PhotoHero({
-    super.key,
-    required this.photo,
-    this.onTap,
-    this.wid,
-    required this.width,
-  });
-
-  final String photo;
-  final VoidCallback? onTap;
-  final Widget? wid;
-  final double width;
-
-  @override
-  Widget build(BuildContext context) {
-    
-    return SizedBox(
-      width: width,
-      child: Hero(
-        tag: photo,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onDoubleTap: onTap,
-            child: Image.network(
-              photo,
-              fit: BoxFit.contain,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class UpdatePage extends StatefulWidget {
   const UpdatePage({Key? key}) : super(key: key);
   @override
@@ -108,9 +72,10 @@ class _UpdatePage extends State<UpdatePage>  {
       'name': productName,
       'price': productPrice,
       'description': discription,
-      'timestamp': Timestamp.fromDate(product.created),
+      'timestamp': Timestamp.fromDate(product.created!),
       'modified': FieldValue.serverTimestamp(),
       'userId': FirebaseAuth.instance.currentUser!.uid,
+      'liker':product.liker,
     });
 
     // 저장 후 원하는 동작을 수행할 수 있습니다.

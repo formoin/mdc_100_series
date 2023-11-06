@@ -43,7 +43,7 @@ class ShrineApp extends StatelessWidget {
         '/favorite': (BuildContext context) => const FavoritePage(),
         '/mypage' : (BuildContext context) => const MyhomePage(),
       },
-      // TODO: Customize the theme (103)
+
       theme: ThemeData.light(useMaterial3: true),
     );
   }

@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:shrine/detailed.dart';
 import 'package:shrine/model/product.dart';
-
+import 'login.dart';
 import 'home.dart';
+
 
 class MyhomePage extends StatefulWidget{
   const MyhomePage({Key? key}) : super(key: key);
@@ -13,79 +13,90 @@ class MyhomePage extends StatefulWidget{
 }
 
 class _MyhomePage extends State<MyhomePage>{
-  Widget _buildCardfavorite(BuildContext context, int index) {
-
-    Product _favorite = favorite[index];
-
-    return Card(
-      // =
-    );
-    
-
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Page'),),
-      body: Column(
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              signOutAnonymously();
+              Navigator.pushNamed( context, '/login' );
+            },
+            icon: Icon(
+              Icons.exit_to_app,
+            ))
+        ]
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          // Set background to blue to emphasize that it's a new route.
           children: [
-            // Load a Lottie file from a remote url
-            ClipOval(
-              child: Lottie.network(
-                fit: BoxFit.contain,
-                'https://assets7.lottiefiles.com/packages/lf20_dwGMPRJ7zu.json'),
+            Container(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.topCenter,
+              child: Image.network(
+                width:200,
+                height:200,
+
+                'http://handong.edu/site/handong/res/img/logo.png'
+// ********************* user profile image
+              )
             ),
-            const SizedBox(height: 20,),
-            Row(
-              children: const [
-                SizedBox(width: 120,),
-                Text(
-                  'MinKyeong Kim',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+            Container(
+              padding: const EdgeInsets.fromLTRB(24, 16, 16, 16),
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children : [
+                        SizedBox(
+                         width: 240,
+                          child: Text(
+                  // ********************** user ID
+                           userid!,
+                           textAlign: TextAlign.left,
+                           style: const TextStyle(
+                             fontWeight: FontWeight.bold,
+                             fontSize: 30,
+                           ),
+                                                  ),
+                        ), 
+                        SizedBox(width: 50,),
+                        Divider( thickness: 1,),
+                        SizedBox(width: 5),
+                        Text(
+                  //*********************** user email
+                          'anonymous',
+                          style: TextStyle(
+                            fontSize: 20,
+                          )
+                        ),
+                        SizedBox(height: 20),
+                        Divider(thickness: 1, height: 1, color: Colors.black),
+                        SizedBox(height: 100),
+                        SizedBox(
+                          width: 250,
+                          child: Text(
+                            "Minkyeong Kim\n\nI promise to take the test honestly before GOD ."
+                          ),
+                        ),
+                        SizedBox(height: 100,),
+                        
+                  
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Row(
-              children: const [
-                SizedBox(width: 160,),
-                Text(
-                  '21800071',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10,),
-            const Text(
-              '  My Favorite Hotel List',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+                  
+                ],
               ),
             ),
-            Expanded(
-              child: _buildListfavorite()
-            ),
-            
           ],
         ),
-    );
-  }
-  Widget _buildListfavorite(){
-    return ListView.builder(
-        itemCount: favorite.length,
-        itemBuilder: (context, index) {
-          return Container(
-            //padding: const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0),
-            constraints: const BoxConstraints(maxHeight: 200, maxWidth: 200),
-            child: _buildCardfavorite(context, index),
-          );
-        },
+      ),
     );
   }
 

@@ -29,7 +29,6 @@ import 'detailed.dart';
 List<Product> favorite = [];
 List<String> list = <String>['ASC', 'DESC'];
 
-
 class HomePage extends StatefulWidget{
   const HomePage({Key? key}) : super(key: key);
 
@@ -42,8 +41,9 @@ class HomePage extends StatefulWidget{
 class _HomePage extends State<HomePage> {
   List<Product> productslist = [];
 
-  List<Card> _buildGridCards(BuildContext context, ApplicationState appState) {
-    productslist = appState.products;
+  List<Card> _buildGridCards(BuildContext context, ApplicationState appState, String dropdownValue) {
+    dropdownValue == 'ASC' ? productslist = appState.products : productslist = List.from(appState.products.reversed);
+    
     if (productslist.isEmpty) {
       return const <Card>[];
     }
@@ -59,7 +59,6 @@ class _HomePage extends State<HomePage> {
               padding: EdgeInsets.zero,
               child: Image.network(
                 product.image,
-                // package: product.assetPackage,
                 width: 300,
                 height: 400,
               ),
@@ -194,8 +193,8 @@ class _HomePage extends State<HomePage> {
           const SizedBox(
             height: 10, width: 1000
           ),
-          Expanded(
-             child : _buildList(context)  
+          Expanded(    
+             child: _buildList(context, dropdownValue)  
           ),
           
         ],
@@ -204,18 +203,17 @@ class _HomePage extends State<HomePage> {
     );
   }
 
-  Widget _buildList(BuildContext context) {
+  Widget _buildList(BuildContext context, String dropdownValue) {
     return Consumer<ApplicationState>(
       builder:(context, appState, _) {
         return GridView.count(
           crossAxisCount: 2,
           padding: const EdgeInsets.all(16.0),
           childAspectRatio: 8.0 / 9.0,
-          children: _buildGridCards(context, appState),
+          children: _buildGridCards(context, appState, dropdownValue),
         );
       },
-    );
-      
+    );   
   }
   
 }

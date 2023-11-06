@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'user.dart';
 //URL, name, price, favorite_num = 0, discription = default, UID, createtime, recentupdatetime,
 class Product {
   Product({
@@ -25,8 +25,7 @@ class Product {
     required this.created,
     required this.modified, 
     required this.reference,
-    // required this.docid,
-    // required this.likeNum
+    required this.liker,
   });
 
   final String uid;
@@ -34,16 +33,10 @@ class Product {
   String name;
   int price;
   String discription;
-  DateTime created;
+  DateTime? created;
   DateTime? modified;
   final DocumentReference reference;
-  // final int likeNum;
+  List<String> liker;
   
-
-  // String get assetName => '$uid-0.jpg';
-  // String get assetPackage => 'shrine_images';
-
-  // @override
-  // String toString() => "$name (id=$uid)";
 }
 

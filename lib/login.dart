@@ -12,14 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shrine/home.dart';
 
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
-
+String? userid;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -52,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
                 // Google 로그인 시도
                 final userCredential = await signInWithGoogle();
                 if (userCredential != null) {
+                  saveGoogleUserToFirestore(userCredential.user!);
                   Navigator.popUntil(context,ModalRoute.withName("/"));
                 } else {
                   print("Error! Cannot login with google");
@@ -65,9 +68,9 @@ class _LoginPageState extends State<LoginPage> {
                 // 익명 로그인 시도
                 final userCredential = await signInAnonymously();
                 if (userCredential != null) {
-                  print("Hi");
+                  final user = userCredential.user;
+                  saveAnonymousUserToFirestore(user!);
                   Navigator.popUntil(context,ModalRoute.withName("/"));
-                  // Navigator.pushNamed(context, '/home');
                 } else {
                   print("Error! Cannot login anonymously");
                   Exception();
@@ -80,6 +83,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
 
 Future<UserCredential?> signInAnonymously() async {
   try {
@@ -113,7 +117,50 @@ Future<UserCredential?> signInWithGoogle() async {
   }
 }
 
+Future<void> saveAnonymousUserToFirestore(User user) async {
+  userid = user.uid;
+  FirebaseFirestore.instance
+      .collection('user')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .set(<String, dynamic>{
+    'message': "I promise to take the test honestly before GOD.",
+    'uid': FirebaseAuth.instance.currentUser!.uid,
+  });
+
+}
+
+// user가 이미 userdb에 있다면 초기화 및 db 저장x
+// user가 없다면 초기화된 정보 db에 저장
+
+
+// user의 정보 불러와서 변수에 저장 -> 이거 안해도 되는듯? 할 만한게 없는데? 그냥 로그인하면 auth에서 다 관리 가능
+
+Future<void> saveGoogleUserToFirestore(User user) async {
+  userid = user.uid;
+  for (final providerProfile in user.providerData) {
+      final uid = providerProfile.uid;
+      if(uid == user.uid){
+        FirebaseFirestore.instance
+            .collection('user')
+            .doc(providerProfile.providerId)
+            .set(<String, dynamic>{
+          'message': "I promise to take the test honestly before GOD.",
+          'uid': providerProfile.providerId,
+          'name': providerProfile.displayName,
+          'email': providerProfile.email
+        });
+      }
+  }
+
+}
+
 void signOutGoogle() async {
   await _googleSignIn.signOut();
   print("Google 사용자 로그아웃");
+}
+
+void signOutAnonymously() async {
+  print("signout anonymously");
+  await FirebaseAuth.instance.signOut();
+  
 }

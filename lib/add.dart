@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:shrine/detailed.dart';
 import 'package:shrine/model/product.dart';
 import 'home.dart';
 import 'productbook.dart';
@@ -68,11 +69,8 @@ class _AddPage extends State<AddPage>  {
     String productName = _nameController.text;
     int productPrice = int.parse(_priceController.text);
     String discription = _descriptionController.text;
-
     Future<String> url = saveImage();
     String _url = await url;
-  
-
 
     FirebaseFirestore.instance
         .collection('productbook')
@@ -84,6 +82,7 @@ class _AddPage extends State<AddPage>  {
       'timestamp': FieldValue.serverTimestamp(),
       'modified': null,
       'userId': FirebaseAuth.instance.currentUser!.uid,
+      'liker': liker,
     });
 
     // 저장 후 원하는 동작을 수행할 수 있습니다.
@@ -118,8 +117,7 @@ class _AddPage extends State<AddPage>  {
               ),
             ),
             onPressed: () async{
-              // 상품이 저장 되어야 함
-              
+              // 상품이 저장 되어야 함        
               saveDataToFirestore();
               _descriptionController.clear();
               _nameController.clear();

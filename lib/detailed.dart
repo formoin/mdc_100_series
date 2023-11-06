@@ -1,9 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:provider/provider.dart';
+import 'package:shrine/app_state.dart';
+import 'package:shrine/favorite.dart';
+import 'package:shrine/login.dart';
 import 'package:shrine/model/product.dart';
 import 'home.dart';
+
+List<String> liker = [];
 
 class SecondScreenArguments {
   Product product;
@@ -14,7 +21,7 @@ class SecondScreenArguments {
 Future<void> deleteProduct(Product product) async{
 
     await product.reference.delete();
-  }
+}
 
 class DetailedPage extends StatefulWidget {
   const DetailedPage({Key? key}) : super(key: key);
@@ -29,6 +36,17 @@ class _DetailedPage extends State<DetailedPage>  {
     final args =
         ModalRoute.of(context)!.settings.arguments as SecondScreenArguments;
     timeDilation = 5.0; // 1.0 means normal animation speed.
+
+    liker = args.product.liker;
+
+    // FirebaseFirestore.instance
+    //     .collection('attendees')
+    //     .where('attending', isEqualTo: true)
+    //     .snapshots()
+    //     .listen((snapshot) {
+    //   _attendees = snapshot.docs.length;
+    //   notifyListeners();
+    // });
 
     return Scaffold(
       appBar: AppBar(
@@ -89,13 +107,38 @@ class _DetailedPage extends State<DetailedPage>  {
                               ),
                                                      ),
                            ), 
-                          SizedBox(width: 50,),
+                          SizedBox(width: 45,),
                           IconButton(
-                            onPressed: (() => ''), 
+                            onPressed: (() {
+                              if(args.product.liker.contains(userid)){
+                                final snackBar = SnackBar(
+                                  content: Text('You can only do it once!!'
+                                ),);
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              }
+                              else{
+                                liker.add(userid!);
+                                FirebaseFirestore.instance
+                                  .collection('productbook')
+                                  .doc(args.product.reference.id)
+                                  .update({"liker":liker});
+                                final snackBar = SnackBar(
+                                   content: Text('I LIKE IT!!'),
+                                  
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              }
+                            }), 
                             icon: Icon(
                               size: 35,
                               Icons.thumb_up
                           )),
+                          Consumer<ApplicationState>(
+                            builder: (context, appState, _ ) => Text(
+                              args.product.liker.length.toString()
+                            ),
+                          
+                          ),
                           
                         ],
                       ),
@@ -125,6 +168,7 @@ class _DetailedPage extends State<DetailedPage>  {
                         ),
                       ),
                       SizedBox(height: 100,),
+                      Text('Creator : '+args.product.uid),
                       Text(
                         args.product.created.toString()+'(created)'
                       ),
@@ -146,46 +190,4 @@ class _DetailedPage extends State<DetailedPage>  {
   
 }
 
-class FavoriteWidget extends StatefulWidget {
-  const FavoriteWidget({super.key});
-
-  @override
-  State<FavoriteWidget> createState() => _FavoriteWidgetState();
-}
-
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-  bool _isFavorited = false;
-
-  void _toggleFavorite() {
-    setState(() {
-      if (_isFavorited) {
-        _isFavorited = false;
-      } else {
-        _isFavorited = true;
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.all(0),
-          child: IconButton(
-            padding: const EdgeInsets.all(0),
-            alignment: Alignment.centerRight,
-            icon: (_isFavorited
-                ? const Icon(Icons.star)
-                : const Icon(Icons.star_border)),
-            color: Colors.yellow[500],
-            onPressed: _toggleFavorite,
-          ),
-        ),
-        
-      ],
-    );
-  }
-}
 
