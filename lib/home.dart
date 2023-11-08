@@ -18,7 +18,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shrine/app_state.dart';
 import 'package:shrine/detailed.dart';
-import 'package:shrine/productbook.dart';
 
 import 'model/product.dart';
 import 'app_state.dart';

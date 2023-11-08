@@ -9,7 +9,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shrine/detailed.dart';
 import 'package:shrine/model/product.dart';
 import 'home.dart';
-import 'productbook.dart';
 import 'app_state.dart';
 
 

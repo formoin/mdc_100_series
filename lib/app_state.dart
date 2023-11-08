@@ -34,13 +34,6 @@ class ApplicationState extends ChangeNotifier {
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform);
 
-    FirebaseUIAuth.configureProviders([
-      EmailAuthProvider(),
-    ]);
-    
-
-     
-
     FirebaseAuth.instance.userChanges().listen((user) {
       
       _loggedIn = true;
@@ -62,6 +55,7 @@ class ApplicationState extends ChangeNotifier {
               modified: document.data()['modified'] == null? null : DateTime.fromMillisecondsSinceEpoch(document.data()['modified'].millisecondsSinceEpoch).toLocal(),
               reference: document.reference,
               liker: List<String>.from(document.data()['liker'] as List),
+              checked: false
             ),
           );
         }

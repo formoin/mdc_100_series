@@ -26,6 +26,7 @@ class Product {
     required this.modified, 
     required this.reference,
     required this.liker,
+    required this.checked,
   });
 
   final String uid;
@@ -37,6 +38,7 @@ class Product {
   DateTime? modified;
   final DocumentReference reference;
   List<String> liker;
+  bool checked;
   
 }
 

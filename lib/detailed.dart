@@ -8,9 +8,11 @@ import 'package:shrine/app_state.dart';
 import 'package:shrine/favorite.dart';
 import 'package:shrine/login.dart';
 import 'package:shrine/model/product.dart';
+import 'package:shrine/wishlist.dart';
 import 'home.dart';
 
 List<String> liker = [];
+List<Product> ispressed = [];
 
 class SecondScreenArguments {
   Product product;
@@ -35,18 +37,9 @@ class _DetailedPage extends State<DetailedPage>  {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as SecondScreenArguments;
-    timeDilation = 5.0; // 1.0 means normal animation speed.
-
+    AddWishlist _addwhishlist = AddWishlist();
     liker = args.product.liker;
 
-    // FirebaseFirestore.instance
-    //     .collection('attendees')
-    //     .where('attending', isEqualTo: true)
-    //     .snapshots()
-    //     .listen((snapshot) {
-    //   _attendees = snapshot.docs.length;
-    //   notifyListeners();
-    // });
 
     return Scaffold(
       appBar: AppBar(
@@ -185,6 +178,27 @@ class _DetailedPage extends State<DetailedPage>  {
           ],
         ),
       ),
+      // floatingActionButton: Consumer<AddWishlist>(
+      //   builder: (context, value, _) => FloatingActionButton(
+      //     onPressed: () {
+      //       setState(() {
+      //         ispressed  = true;
+      //       });
+      //       value.addwishlist(args.product);
+      //     },
+      //     child: ispressed ? Icon(Icons.shopping_cart) : Icon(Icons.check)
+      //   ),
+      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => setState(() {
+          args.product.checked = true;
+          ispressed.add(args.product);
+          _addwhishlist.addwishlist(args.product);
+        }),
+        child: args.product.checked ? Icon(Icons.check) : Icon(Icons.shopping_cart),
+      ),
+      
+      
     );
   }
   

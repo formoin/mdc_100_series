@@ -144,17 +144,19 @@ Future<void> saveGoogleUserToFirestore(User user) async {
   
   for (final providerProfile in user.providerData) { 
 
-    userid = providerProfile.uid;
+    userid = user.uid;
     email = providerProfile.email;
     username = providerProfile.displayName;
-    imageurl = 'https://image.musinsa.com/mfile_s01/2022/05/16/c7544ec00472f1860347a0094c0ecfa1181418.jpg';
-
+    imageurl = providerProfile.photoURL;
+    if(imageurl == null){
+      imageurl = 'https://i.stack.imgur.com/34AD2.jpg';
+    }
     FirebaseFirestore.instance
         .collection('user')
         .doc(providerProfile.uid)
         .set(<String, dynamic>{
       'message': "I promise to take the test honestly before GOD.",
-      'uid': providerProfile.uid,
+      'uid': user.uid,
       'name': providerProfile.displayName,
       'email': providerProfile.email
     });
