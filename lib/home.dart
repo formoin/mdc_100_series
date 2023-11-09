@@ -49,18 +49,28 @@ class _HomePage extends State<HomePage> {
     return productslist.map((product) {
       return Card(
         clipBehavior: Clip.antiAlias,
-        child: Column(
+        child: Consumer<ApplicationState>(
+                  builder: (context, appstate, _) =>Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
 
-            Container(
-              height: 100,
-              padding: EdgeInsets.zero,
-              child: Image.network(
-                product.image,
-                width: 300,
-                height: 400,
-              ),
+            Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Container(
+                  height: 100,
+                  padding: EdgeInsets.zero,
+                  child: Image.network(
+                    product.image,
+                    width: 300,
+                    height: 400,
+                  ),
+                ),
+                if(appstate.wishname.contains(product.name) )...[
+                  const Icon(Icons.check_circle),
+                ]
+                
+              ]
             ),
             Expanded(
               child: Padding(
@@ -125,6 +135,7 @@ class _HomePage extends State<HomePage> {
             ),
           ],
         ),
+        ),
       );
     }).toList();
   }
@@ -152,8 +163,15 @@ class _HomePage extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(
+              Icons.shopping_cart,
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/wishpage');
+            },
+          ),
+          IconButton(
+            icon: const Icon(
               Icons.add,
-              semanticLabel: 'search',
             ),
             onPressed: () {
               Navigator.pushNamed(context, '/add');

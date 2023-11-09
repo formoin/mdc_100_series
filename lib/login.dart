@@ -149,11 +149,11 @@ Future<void> saveGoogleUserToFirestore(User user) async {
     username = providerProfile.displayName;
     imageurl = providerProfile.photoURL;
     if(imageurl == null){
-      imageurl = 'https://i.stack.imgur.com/34AD2.jpg';
+      imageurl = 'https://cdn.wadiz.kr/ft/images/green001/2021/1213/20211213120822340_4.jpg/wadiz/format/jpg/quality/80/';
     }
     FirebaseFirestore.instance
         .collection('user')
-        .doc(providerProfile.uid)
+        .doc(user.uid)
         .set(<String, dynamic>{
       'message': "I promise to take the test honestly before GOD.",
       'uid': user.uid,

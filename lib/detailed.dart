@@ -1,15 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:provider/provider.dart';
 import 'package:shrine/app_state.dart';
-import 'package:shrine/favorite.dart';
 import 'package:shrine/login.dart';
 import 'package:shrine/model/product.dart';
-import 'package:shrine/wishlist.dart';
-import 'home.dart';
+import 'package:shrine/model/wishlist.dart';
+import 'package:shrine/wishpage.dart';
 
 List<String> liker = [];
 List<Product> ispressed = [];
@@ -37,9 +34,7 @@ class _DetailedPage extends State<DetailedPage>  {
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context)!.settings.arguments as SecondScreenArguments;
-    AddWishlist _addwhishlist = AddWishlist();
     liker = args.product.liker;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +47,7 @@ class _DetailedPage extends State<DetailedPage>  {
                 context, 
                 '/update', 
                 arguments: SecondScreenArguments(product: args.product));
-            }, icon: Icon(
+            }, icon: const Icon(
               Icons.create
             )),
             IconButton(
@@ -178,25 +173,15 @@ class _DetailedPage extends State<DetailedPage>  {
           ],
         ),
       ),
-      // floatingActionButton: Consumer<AddWishlist>(
-      //   builder: (context, value, _) => FloatingActionButton(
-      //     onPressed: () {
-      //       setState(() {
-      //         ispressed  = true;
-      //       });
-      //       value.addwishlist(args.product);
-      //     },
-      //     child: ispressed ? Icon(Icons.shopping_cart) : Icon(Icons.check)
-      //   ),
-      // ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() {
-          args.product.checked = true;
-          ispressed.add(args.product);
-          _addwhishlist.addwishlist(args.product);
-        }),
-        child: args.product.checked ? Icon(Icons.check) : Icon(Icons.shopping_cart),
+      floatingActionButton: Consumer<ApplicationState>(
+        builder: (context,appstate, _) => FloatingActionButton(
+            onPressed: () => {
+              appstate.wish(args.product),
+            },
+            child: appstate.wishname.contains(args.product.name) ? Icon(Icons.check) : Icon(Icons.shopping_cart)
+        ),
       ),
+      
       
       
     );

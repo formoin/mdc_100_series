@@ -21,7 +21,7 @@ class _MyhomePage extends State<MyhomePage>{
         actions: [
           IconButton(
             onPressed: () {
-              loginver == 1 ? signInWithGoogle() : signOutAnonymously();
+              loginver == 1 ? signOutGoogle() : signOutAnonymously();
               Navigator.pushNamed( context, '/login' );
             },
             icon: Icon(

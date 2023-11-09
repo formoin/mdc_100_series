@@ -17,6 +17,7 @@ import 'package:shrine/add.dart';
 import 'package:shrine/mypage.dart';
 import 'package:shrine/signup.dart';
 import 'package:shrine/update.dart';
+import 'package:shrine/wishpage.dart';
 
 import 'home.dart';
 import 'login.dart';
@@ -40,7 +41,7 @@ class ShrineApp extends StatelessWidget {
         '/update':( BuildContext context) => const UpdatePage(),  
         '/search': (BuildContext context) => const SearchPage(),
         '/detailed': (BuildContext context) => const DetailedPage(),
-        '/favorite': (BuildContext context) => const FavoritePage(),
+        '/wishpage': (BuildContext context) => const WishlistPage(),
         '/mypage' : (BuildContext context) => const MyhomePage(),
       },
 

@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'user.dart';
+
 //URL, name, price, favorite_num = 0, discription = default, UID, createtime, recentupdatetime,
 class Product {
   Product({
@@ -26,7 +26,6 @@ class Product {
     required this.modified, 
     required this.reference,
     required this.liker,
-    required this.checked,
   });
 
   final String uid;
@@ -38,7 +37,6 @@ class Product {
   DateTime? modified;
   final DocumentReference reference;
   List<String> liker;
-  bool checked;
   
 }
 
