@@ -26,15 +26,14 @@ class _WishlistPage extends State<WishlistPage>  {
       appBar: AppBar(
         title: const Text('Wish List'),
       ),
-      body: SingleChildScrollView(
-        child: Consumer<ApplicationState>(
+      body: Consumer<ApplicationState>(
         builder: (context,appstate, _) {
-          return Column(
+          return ListView(
             children: [
               for(Wishlist wishlist in appstate.wishlist)
                 Row(children: [
                   Container(
-                    height: 100,
+                    height: 80,
                     padding: EdgeInsets.zero,
                     child: Image.network(
                       wishlist.image,
@@ -43,7 +42,7 @@ class _WishlistPage extends State<WishlistPage>  {
                     ),
                   ),
                   Container(
-                    width: 150,
+                    width: 130,
                     alignment: Alignment.center,
                     child: Text(
                       wishlist.name
@@ -61,7 +60,7 @@ class _WishlistPage extends State<WishlistPage>  {
         }
       ),
         
-      ),
+   
       
       
     );
